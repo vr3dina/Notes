@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Notes.DB.Note>
+
+@{
+    ViewBag.Title = "ShowNotes";
+}
+
+<h2>Опубликованные заметки</h2>
+
+<p>
+    @Html.ActionLink("Создать новую заметку", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tags)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BinaryFile)
+        </th>
+        <th></th>
+    </tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Login)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tags)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Скачать", "Download", new { Id = item.Id })
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Удалить", "Delete", new { Id = item.Id })
+                </td>
+            </tr>
+        }
+    }
+</table>
