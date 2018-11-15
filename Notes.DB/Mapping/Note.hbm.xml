@@ -13,11 +13,11 @@
     <property name="Text" lazy="false"/>
     <property name="Tags" lazy="false"/>
     <property name="CreationDate" lazy="false"/>
-    <property name="ModificationDate" lazy="false"/>
     <property name="BinaryFile" length="2147483647"  lazy="false"/>
     <property name="FileType" lazy="false"/>
-
     <many-to-one name="User" column="UserId" lazy="false"/>
+       
   </class>
+
 
 </hibernate-mapping>

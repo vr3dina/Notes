@@ -20,8 +20,6 @@ namespace Notes.DB
         [Display(Name = "Дата создания")]
         public virtual DateTime CreationDate { get; set; }
 
-        public virtual DateTime? ModificationDate { get; set; }
-
         [Display(Name = "Пользователь")]
         public virtual User User { get; set; }
 

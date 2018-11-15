@@ -2,13 +2,8 @@
 
 @{
     ViewBag.Title = "ShowNotes";
+    ViewBag.notes = Model;
 }
-
-<h2>Опубликованные заметки</h2>
-
-<p>
-    @Html.ActionLink("Создать новую заметку", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -46,7 +41,10 @@
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    @Html.ActionLink("Скачать", "Download", new { Id = item.Id })
+                    @if (item.BinaryFile != null)
+                    {
+                        <a href="/Note/Download/@item.Id"><img src="~/Content/img/download.png" height="17"/></a>
+                    }
                 </td>
                 <td>
                     @Html.ActionLink("Редактировать", "Edit", new { /* id=item.PrimaryKey */ }) |

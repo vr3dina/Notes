@@ -1,0 +1,14 @@
+﻿@model Notes.Web.Models.LoginModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Note Editor</h1>
+    <p class="lead">Это проcтой сайт для работы с заметками.</p>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <p><a href="/Account/Login" class="btn btn-primary btn-lg">Войти &raquo;</a></p>
+    }
+</div>

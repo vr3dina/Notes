@@ -16,14 +16,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Редектор заметок", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Редектор заметок", "Index", "Note", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Опубликованные заметки", "ShowPublishedNotes", "Note")</li>
-                    <li>@Html.ActionLink("Новая заметка", "Create", "Note")</li>
-                </ul>
-            </div>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Заметки", "ShowNotes", "Note")</li>
+                        <li>@Html.ActionLink("Новая заметка", "Create", "Note")</li>
+                        <li><a>@User.Identity.Name</a></li>
+                        <li>@Html.ActionLink("Выйти", "Logoff", "Account")</li>
+                    </ul>
+                </div>
+            }
         </div>
     </div>
     <div class="container body-content">

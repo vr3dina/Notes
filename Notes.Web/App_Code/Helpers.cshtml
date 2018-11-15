@@ -1,0 +1,9 @@
+﻿@helper Button(string text, string onclick)
+{
+    <input type="button" value="@(text)" onclick="@(onclick)" class="btn btn-default" />
+}
+
+@helper Button(string text)
+{
+    <input type="submit" value="@(text)" class="btn btn-default" />
+}
