@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-
+    
     var BAKSPACE = 8;
     var SPACE = 32;
     var SELECTOR = "input[name=tags]";

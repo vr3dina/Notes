@@ -23,7 +23,8 @@
             {
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Заметки", "ShowNotes", "Note")</li>
+                        <li>@Html.ActionLink("Мои заметки", "MyNotes", "Note")</li>
+                        <li>@Html.ActionLink("Опубликованные заметки", "PublishedNotes", "Note")</li>
                         <li>@Html.ActionLink("Новая заметка", "Create", "Note")</li>
                         <li><a>@User.Identity.Name</a></li>
                         <li>@Html.ActionLink("Выйти", "Logoff", "Account")</li>
@@ -43,5 +44,6 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

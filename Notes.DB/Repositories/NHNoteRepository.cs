@@ -10,11 +10,12 @@ namespace Notes.DB.Repositories
 {
     public class NHNoteRepository : NHBaseRepository<Note>, INoteRepository
     {
-        public IEnumerable<Note> FindByTitle(string title)
+        public IEnumerable<Note> LoadByTitle(string title)
         {
             var session = NHibernateHelper.GetCurrentSession();
             var notes = session.QueryOver<Note>()
                 .Where(Restrictions.On<Note>(note => note.Title).IsLike($"%{title}%"))
+                .And(note => note.Published == true)
                 .List();
 
             NHibernateHelper.CloseSession();
@@ -28,6 +29,19 @@ namespace Notes.DB.Repositories
 
             var notes = session.QueryOver<Note>()
                 .Where(note => note.Published == true)
+                .List();
+
+            NHibernateHelper.CloseSession(); ;
+
+            return notes;
+        }
+
+        public IEnumerable<Note> LoadByUser(long userId)
+        {
+            var session = NHibernateHelper.GetCurrentSession();
+
+            var notes = session.QueryOver<Note>()
+                .Where(note => note.User.Id == userId)
                 .List();
 
             NHibernateHelper.CloseSession(); ;

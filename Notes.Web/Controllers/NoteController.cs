@@ -4,6 +4,7 @@ using Notes.DB.Repositories.Interfaces;
 using Notes.Web.Models;
 using System;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Notes.Web.Controllers
@@ -33,9 +34,9 @@ namespace Notes.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateNoteModel model)
+        public ActionResult Create(NoteModel model)
         {
-            User user = userRepositoty.Load(1);
+            User user = userRepositoty.LoadByLogin(User.Identity.Name);
 
             string fileType = "";
             byte[] fileData = null;
@@ -63,34 +64,77 @@ namespace Notes.Web.Controllers
                 FileType = fileType
             });
 
-            return RedirectToAction("ShowPublishedNotes");
+            return RedirectToAction("MyNotes");
         }
 
-        public ActionResult ShowPublishedNotes()
+        public ActionResult PublishedNotes()
         {
-            var allNotes = noteRepository.LoadAllPublished(); ;
-            return View("ShowNotes", allNotes);
+            var publicNotes = noteRepository.LoadAllPublished();
+
+            return View(publicNotes);
         }
 
-        public ActionResult ShowNotes()
+        public ActionResult MyNotes()
         {
-            return View("Note");
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            var myNotes = noteRepository.LoadByUser(user.Id);
+            return View("Notes", myNotes);
         }
 
-        public ActionResult Download(int id)
+        public ActionResult Download(long id)
         {
             var note = noteRepository.Load(id);
             return File(note.BinaryFile, note.FileType);
         }
 
-        [HttpPost]
-        public ActionResult Search(string title)
+        public ActionResult Edit(long id)
         {
-            if (title == null) return null;
+            var note = noteRepository.Load(id);
 
-            var notes = noteRepository.FindByTitle(title);
+            return View(note);
+        }
 
-            return PartialView("ShowNotes", notes);
+        [HttpPost]
+        public ActionResult Save(Note note)
+        {
+            note.User = userRepositoty.LoadByLogin(User.Identity.Name);
+            noteRepository.Save(note);
+            return RedirectToAction("PublishedNotes");
+        }
+
+        public ActionResult Details(long id)
+        {
+            var note = noteRepository.Load(id);
+            return View(note);
+        }
+
+        [HttpPost]
+        public ActionResult SearchAndSort(string title, string sortColumn)
+        {
+            var notes = noteRepository.LoadByTitle(title);
+
+            switch (sortColumn)
+            {
+                case "title":
+                    notes = notes.OrderBy(note => note.Title);
+                    break;
+                case "user":
+                    notes = notes.OrderBy(note => note.User);
+                    break;
+                case "tags":
+                    notes = notes.OrderBy(note => string.Join(" ", note.Tags));
+                    break;
+                case "date":
+                    notes = notes.OrderBy(note => note.CreationDate);
+                    break;
+                case "public":
+                    notes = notes.OrderBy(note => note.Published);
+                    break;
+                default:
+                    break;
+            }
+
+            return PartialView("Notes", notes);
         }
     }
 }

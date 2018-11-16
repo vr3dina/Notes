@@ -3,7 +3,7 @@ using System.Web;
 
 namespace Notes.Web.Models
 {
-    public class CreateNoteModel
+    public class NoteModel
     {
         [Display(Name = "Название")]
         [Required(ErrorMessage = "Введите название заметки")]
