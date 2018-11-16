@@ -206,6 +206,7 @@
     <Content Include="Views\Note\PublishedNotes.cshtml" />
     <Content Include="Views\Note\Edit.cshtml" />
     <Content Include="Views\Note\Details.cshtml" />
+    <Content Include="Views\Account\Singup.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
