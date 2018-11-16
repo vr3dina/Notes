@@ -14,24 +14,14 @@ namespace Notes.DB.Repositories
 
         public virtual void Delete(long id)
         {
-            var session = NHibernateHelper.GetCurrentSession();
-
-            try
+            using (ISession session = NHibernateHelper.GetCurrentSession())
             {
-                using (var tx = session.BeginTransaction())
+                using (var transaction = session.BeginTransaction())
                 {
-                    var entity = Load(id);
-
-                    if (entity != null)
-                    {
-                        session.Delete(entity);
-                        tx.Commit();
-                    }
+                    var obj = session.Get<T>(id);
+                    session.Delete(obj);
+                    transaction.Commit();
                 }
-            }
-            finally
-            {
-                NHibernateHelper.CloseSession();
             }
         }
 

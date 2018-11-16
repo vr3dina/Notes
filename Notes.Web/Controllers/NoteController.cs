@@ -119,7 +119,7 @@ namespace Notes.Web.Controllers
                     notes = notes.OrderBy(note => note.Title);
                     break;
                 case "user":
-                    notes = notes.OrderBy(note => note.User);
+                    notes = notes.OrderBy(note => note.User.Login);
                     break;
                 case "tags":
                     notes = notes.OrderBy(note => string.Join(" ", note.Tags));
@@ -135,6 +135,12 @@ namespace Notes.Web.Controllers
             }
 
             return PartialView("Notes", notes);
+        }
+
+        public ActionResult Delete(long id)
+        {
+            noteRepository.Delete(id);
+            return RedirectToAction("MyNotes");
         }
     }
 }
