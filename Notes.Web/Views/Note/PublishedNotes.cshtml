@@ -2,6 +2,11 @@
 
 @{
     ViewBag.Title = "PublishedNotes";
+    var list = new SelectList(new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Поиск по аголовоку", Value = "title"},
+        new SelectListItem { Text = "Поиск по тегам", Value = "tags"},
+    }, "Value", "Text");
 }
 
 <h2>Опубликованные заметки</h2>
@@ -11,8 +16,10 @@
     <div class="col-md-10">
         @Html.Editor("search", new { htmlAttributes = new { @id = "search" } })
         <input type="button" value="Найти" onclick="ASearchAndSort(this)" class="btn btn-default" />
+        @Html.DropDownList("searchFields", list, new { @id = "field", @class = "btn btn-default" })
     </div>
 </div>
+<hr /> <hr />
 
 <div id="result">
     <table class="table">
@@ -82,8 +89,9 @@
 
 <script>
     function ASearchAndSort(v) {
-        var value = $("#search");
-        var model = { title: value.val(), sortColumn: v.id};
+        var searchVal = $("#search").val();
+        var searchField = $("#field").val();
+        var model = { searchPattern: searchVal, searchField: searchField, sortColumn: v.id };
         $.ajax({
             url: '@Url.Action("SearchAndSort", "Note")',
             type: 'POST',

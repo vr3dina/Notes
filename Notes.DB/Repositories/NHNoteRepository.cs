@@ -1,20 +1,30 @@
-﻿using NHibernate;
-using NHibernate.Criterion;
+﻿using NHibernate.Criterion;
 using Notes.DB.Repositories.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
 
 namespace Notes.DB.Repositories
 {
     public class NHNoteRepository : NHBaseRepository<Note>, INoteRepository
     {
-        public IEnumerable<Note> LoadByTitle(string title)
+        public IEnumerable<Note> FindByTitle(string title)
         {
             var session = NHibernateHelper.GetCurrentSession();
             var notes = session.QueryOver<Note>()
                 .Where(Restrictions.On<Note>(note => note.Title).IsLike($"%{title}%"))
+                .And(note => note.Published == true)
+                .List();
+
+            NHibernateHelper.CloseSession();
+
+            return notes;
+        }
+
+        public IEnumerable<Note> FindByTag(string tags)
+        {
+            var session = NHibernateHelper.GetCurrentSession();
+
+            var notes = session.QueryOver<Note>()
+                .Where(Restrictions.On<Note>(note => note.Tags).IsLike($"%{tags}%"))
                 .And(note => note.Published == true)
                 .List();
 

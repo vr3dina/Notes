@@ -3,6 +3,8 @@ using Notes.DB.Repositories;
 using Notes.DB.Repositories.Interfaces;
 using Notes.Web.Models;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -57,7 +59,7 @@ namespace Notes.Web.Controllers
                 Title = model.Title,
                 Published = model.Published,
                 Text = model.Text,
-                Tags = model.Tags,
+                Tags = string.Join(" ", model.Tags),
                 CreationDate = DateTime.Now,
                 User = user,
                 BinaryFile = fileData,
@@ -109,33 +111,36 @@ namespace Notes.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchAndSort(string title, string sortColumn)
+        public ActionResult SearchAndSort(string searchPattern, string searchField, string sortColumn)
         {
-            var notes = noteRepository.LoadByTitle(title);
+            var notes = (searchField == "tags") ? noteRepository.FindByTag(searchPattern) : noteRepository.FindByTitle(searchPattern);
 
-            switch (sortColumn)
-            {
-                case "title":
-                    notes = notes.OrderBy(note => note.Title);
-                    break;
-                case "user":
-                    notes = notes.OrderBy(note => note.User.Login);
-                    break;
-                case "tags":
-                    notes = notes.OrderBy(note => string.Join(" ", note.Tags));
-                    break;
-                case "date":
-                    notes = notes.OrderBy(note => note.CreationDate);
-                    break;
-                case "public":
-                    notes = notes.OrderBy(note => note.Published);
-                    break;
-                default:
-                    break;
-            }
+            notes = Sort(notes, sortColumn);
 
             return PartialView("Notes", notes);
         }
+
+
+        private IEnumerable<Note> Sort(IEnumerable<Note> notes, string sortColumn)
+        {
+            switch (sortColumn)
+            {
+                case "title":
+                    return notes.OrderBy(note => note.Title);
+                case "user":
+                    return notes.OrderBy(note => note.User.Login);
+                case "tags":
+                    return notes.OrderBy(note => note.Tags);
+                case "date":
+                    return notes.OrderBy(note => note.CreationDate);
+                case "public":
+                    return notes.OrderBy(note => note.Published);
+                default:
+                    break;
+            }
+            return notes;
+        }
+
 
         public ActionResult Delete(long id)
         {

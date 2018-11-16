@@ -17,7 +17,7 @@ namespace Notes.DB
         public virtual string Text { get; set; }
 
         [Display(Name = "Теги")]
-        public virtual string[] Tags { get; set; }
+        public virtual string Tags { get; set; }
 
         [Display(Name = "Дата создания")]
         public virtual DateTime CreationDate { get; set; }
