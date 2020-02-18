@@ -59,27 +59,29 @@ namespace Notes.DB.Repositories
             return notes;
         }
 
-        //public override void Save(Note entity)
-        //{
-        //    var session = NHibernateHelper.GetCurrentSession();
-
-        //    try
-        //    {
-        //        var q = session.CreateSQLQuery(
-        //            $"EXEC SaveNote @Title=:title,@Published=:published,@Text=:text,@Tags=:tags," +
-        //            $"@CreationDate=:date,@UserId=:userId,@BinaryFile=:fileData,@FileType=:fileType")
-        //        .SetString("title", entity.Title)
-        //        .SetBoolean("published", entity.Published)
-        //        .SetString("text", entity.Text)
-        //        .SetString("tags", string.Join(" ", entity.Tags))
-        //        .SetDateTime("date", entity.CreationDate)
-        //        .SetInt64("userId", entity.User.Id)
-        //        .SetParameter("fileData", entity.BinaryFile/*, NHibernateUtil.GuessType(entity.BinaryFile)*/)
-        //        .SetString("fileType", entity.FileType);
-        //    finally
-        //    {
-        //        NHibernateHelper.CloseSession();
-        //    }
-        //}
+        public override void Save(Note entity)
+        {
+            var session = NHibernateHelper.GetCurrentSession();
+            
+            try
+            {
+                var q = session.CreateSQLQuery(
+                    $"EXEC SaveNote @Title=:title,@Published=:published,@Text=:text,@Tags=:tags," +
+                    $"@CreationDate=:date,@UserId=:userId,@BinaryFile=:fileData,@FileType=:fileType")
+                .SetString("title", entity.Title)
+                .SetBoolean("published", entity.Published)
+                .SetString("text", entity.Text)
+                .SetString("tags", entity.Tags)
+                .SetDateTime("date", entity.CreationDate)
+                .SetInt64("userId", entity.User.Id)
+                .SetParameter("fileData", entity.BinaryFile)
+                .SetString("fileType", entity.FileType)
+                .UniqueResult();
+            }
+            finally
+            {
+                NHibernateHelper.CloseSession();
+            }
+        }
     }
 }

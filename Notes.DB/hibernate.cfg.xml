@@ -4,7 +4,7 @@
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
     <property name="dialect">NHibernate.Dialect.MsSql2012Dialect</property>
     <property name="connection.connection_string">
-      Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\vr3dina\OneDrive\Sources\ituniver.ELMA\Notes\Notes.Web\App_Data\NotesDB.mdf;Integrated Security=True
+      Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|NotesDB.mdf;Integrated Security=True
     </property>
 
     <property name="show_sql">true</property>
