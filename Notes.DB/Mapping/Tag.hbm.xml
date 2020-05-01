@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+    namespace="Notes.DB" assembly="Notes.DB">
+
+  <class name="Tag" lazy="false">
+
+    <id name="Id">
+      <generator class="native" />
+    </id>
+
+    <property name="TagName" lazy="false"/>
+
+    <!--<bag name="Notes" table="NoteTag" lazy="false" cascade="save-update">
+      <key column="TagId"/>
+      <many-to-many class="Note" column="NoteId"/>
+    </bag>-->
+  </class>
+
+</hibernate-mapping>

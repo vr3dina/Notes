@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+    namespace="Notes.DB" assembly="Notes.DB">
+
+  <class name="File" table="Files" lazy="false">
+
+    <id name="Id">
+      <generator class="native" />
+    </id>
+
+    <property name="BinaryFile" length="2147483647"  lazy="false"/>
+    <property name="FileType" lazy="false"/>
+  </class>
+
+</hibernate-mapping>

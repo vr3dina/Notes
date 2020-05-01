@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Notes.DB
@@ -17,7 +18,7 @@ namespace Notes.DB
         public virtual string Text { get; set; }
 
         [Display(Name = "Теги")]
-        public virtual string Tags { get; set; }
+        public virtual IList<Tag> Tags { get; set; }
 
         [Display(Name = "Дата создания")]
         public virtual DateTime CreationDate { get; set; }
@@ -26,8 +27,6 @@ namespace Notes.DB
         public virtual User User { get; set; }
 
         [Display(Name = "Файл")]
-        public virtual byte[] BinaryFile { get; set; }
-
-        public virtual string FileType { get; set; }
+        public virtual File File { get; set; }
     }
 }

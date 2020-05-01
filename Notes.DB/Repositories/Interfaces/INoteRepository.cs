@@ -6,7 +6,7 @@ namespace Notes.DB.Repositories.Interfaces
     {
         IEnumerable<Note> FindByTitle(string title);
 
-        IEnumerable<Note> FindByTag(string searchPattern);
+        //IEnumerable<Note> FindByTag(string searchPattern);
 
         IEnumerable<Note> LoadAllPublished();
 

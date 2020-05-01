@@ -1,9 +1,9 @@
-﻿using Notes.DB;
+﻿using Microsoft.Ajax.Utilities;
+using Notes.DB;
 using Notes.DB.Repositories;
 using Notes.DB.Repositories.Interfaces;
 using Notes.Web.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,11 +16,13 @@ namespace Notes.Web.Controllers
     {
         private INoteRepository noteRepository;
         private IUserRepositoty userRepositoty;
+        private ITagRepositoty tagRepositoty;
 
         public NoteController()
         {
             noteRepository = new NHNoteRepository();
             userRepositoty = new NHUserRepository();
+            tagRepositoty = new NHTagRepository();
         }
 
         [AllowAnonymous]
@@ -40,30 +42,38 @@ namespace Notes.Web.Controllers
         {
             User user = userRepositoty.LoadByLogin(User.Identity.Name);
 
-            string fileType = "";
-            byte[] fileData = null;
-            var file = model.BinaryFile;
-
-            if (file != null)
+            DB.File file = null;
+            if (model.BinaryFile != null)
             {
-                fileType = file.ContentType;
-
-                using (var binaryReader = new BinaryReader(file.InputStream))
+                byte[] fileData = null;
+                using (var binaryReader = new BinaryReader(model.BinaryFile.InputStream))
                 {
-                    fileData = binaryReader.ReadBytes(file.ContentLength);
+                    fileData = binaryReader.ReadBytes(model.BinaryFile.ContentLength);
                 }
+                file = new DB.File()
+                {
+                    BinaryFile = fileData,
+                    FileType = model.BinaryFile.ContentType
+                };
             }
+
+            List<Tag> tags = new List<Tag>(model.Tags.Length);
+            foreach (var newTag in model.Tags)
+            {
+                var tag = tagRepositoty.LoadByTagName(newTag);
+                tags.Add(tag ?? new Tag() { TagName = newTag });
+            }
+
 
             noteRepository.Save(new Note()
             {
                 Title = model.Title,
                 Published = model.Published,
                 Text = model.Text,
-                Tags = string.Join(" ", model.Tags),
+                Tags = tags.DistinctBy(t => t.TagName).ToList(),
                 CreationDate = DateTime.Now,
                 User = user,
-                BinaryFile = fileData,
-                FileType = fileType
+                File = file
             });
 
             return RedirectToAction("MyNotes");
@@ -86,7 +96,7 @@ namespace Notes.Web.Controllers
         public ActionResult Download(long id)
         {
             var note = noteRepository.Load(id);
-            return File(note.BinaryFile, note.FileType);
+            return File(note.File.BinaryFile, note.File.FileType);
         }
 
         public ActionResult Edit(long id)
@@ -113,7 +123,8 @@ namespace Notes.Web.Controllers
         [HttpPost]
         public ActionResult SearchAndSort(string searchPattern, string searchField, string sortColumn)
         {
-            var notes = (searchField == "tags") ? noteRepository.FindByTag(searchPattern) : noteRepository.FindByTitle(searchPattern);
+            //var notes = (searchField == "tags") ? noteRepository.FindByTag(searchPattern) : noteRepository.FindByTitle(searchPattern);
+            var notes = noteRepository.FindByTitle(searchPattern);
 
             notes = Sort(notes, sortColumn);
 
@@ -129,8 +140,8 @@ namespace Notes.Web.Controllers
                     return notes.OrderBy(note => note.Title);
                 case "user":
                     return notes.OrderBy(note => note.User.Login);
-                case "tags":
-                    return notes.OrderBy(note => note.Tags);
+                //case "tags":
+                //    return notes.OrderBy(note => note.Tags);
                 case "date":
                     return notes.OrderBy(note => note.CreationDate);
                 case "public":

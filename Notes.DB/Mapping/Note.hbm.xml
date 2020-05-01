@@ -11,11 +11,14 @@
     <property name="Title" lazy="false"/>
     <property name="Published" lazy="false"/>
     <property name="Text" lazy="false"/>
-    <property name="Tags" lazy="false"/>
     <property name="CreationDate" lazy="false"/>
-    <property name="BinaryFile" length="2147483647"  lazy="false"/>
-    <property name="FileType" lazy="false"/>
     <many-to-one name="User" column="UserId" lazy="false"/>
+    <many-to-one name="File" column="FileId" lazy="false" cascade="all"/>
+
+    <bag name="Tags" table="NoteTag" lazy="false" cascade="save-update">
+      <key column="NoteId"/>
+      <many-to-many class="Notes.DB.Tag" column="TagId"/>
+    </bag>
        
   </class>
 

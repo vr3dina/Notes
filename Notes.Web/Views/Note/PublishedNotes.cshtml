@@ -40,7 +40,7 @@
                 <a onclick="ASearchAndSort(this)" id="public" data->Опубликовано</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BinaryFile)
+                @Html.DisplayNameFor(model => model.File)
             </th>
             <th></th>
         </tr>
@@ -59,7 +59,8 @@
                         @Html.DisplayFor(modelItem => item.User.Login)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Tags)
+                        @*@Html.Display(string.Join(" ", item.Tags.Select(t => t.TagName)));*@
+                        @string.Join(" ", item.Tags.Select(t => t.TagName))
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.CreationDate)
@@ -68,7 +69,7 @@
                         @Html.DisplayFor(modelItem => item.Published)
                     </td>
                     <td>
-                        @if (item.BinaryFile != null)
+                        @if (item.File != null)
                         {
                             <a href="/Note/Download/@item.Id"><img src="~/Content/img/download.png" height="17" /></a>
                         }

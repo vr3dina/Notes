@@ -19,19 +19,19 @@ namespace Notes.DB.Repositories
             return notes;
         }
 
-        public IEnumerable<Note> FindByTag(string tags)
-        {
-            var session = NHibernateHelper.GetCurrentSession();
+        //public IEnumerable<Note> FindByTag(string tags)
+        //{
+        //    var session = NHibernateHelper.GetCurrentSession();
 
-            var notes = session.QueryOver<Note>()
-                .Where(Restrictions.On<Note>(note => note.Tags).IsLike($"%{tags}%"))
-                .And(note => note.Published == true)
-                .List();
+        //    var notes = session.QueryOver<Note>()
+        //        .Where(Restrictions.On<Note>(note => note.Tags).IsLike($"%{tags}%"))
+        //        .And(note => note.Published == true)
+        //        .List();
 
-            NHibernateHelper.CloseSession();
+        //    NHibernateHelper.CloseSession();
 
-            return notes;
-        }
+        //    return notes;
+        //}
 
         public IEnumerable<Note> LoadAllPublished()
         {
@@ -59,29 +59,29 @@ namespace Notes.DB.Repositories
             return notes;
         }
 
-        public override void Save(Note entity)
-        {
-            var session = NHibernateHelper.GetCurrentSession();
+        //public override void Save(Note entity)
+        //{
+            //var session = NHibernateHelper.GetCurrentSession();
             
-            try
-            {
-                var q = session.CreateSQLQuery(
-                    $"EXEC SaveNote @Title=:title,@Published=:published,@Text=:text,@Tags=:tags," +
-                    $"@CreationDate=:date,@UserId=:userId,@BinaryFile=:fileData,@FileType=:fileType")
-                .SetString("title", entity.Title)
-                .SetBoolean("published", entity.Published)
-                .SetString("text", entity.Text)
-                .SetString("tags", entity.Tags)
-                .SetDateTime("date", entity.CreationDate)
-                .SetInt64("userId", entity.User.Id)
-                .SetParameter("fileData", entity.BinaryFile)
-                .SetString("fileType", entity.FileType)
-                .UniqueResult();
-            }
-            finally
-            {
-                NHibernateHelper.CloseSession();
-            }
-        }
+            //try
+            //{
+            //    var q = session.CreateSQLQuery(
+            //        $"EXEC SaveNote @Title=:title,@Published=:published,@Text=:text,@Tags=:tags," +
+            //        $"@CreationDate=:date,@UserId=:userId,@BinaryFile=:fileData,@FileType=:fileType")
+            //    .SetString("title", entity.Title)
+            //    .SetBoolean("published", entity.Published)
+            //    .SetString("text", entity.Text)
+            //    .SetString("tags", entity.Tags)
+            //    .SetDateTime("date", entity.CreationDate)
+            //    .SetInt64("userId", entity.User.Id)
+            //    .SetParameter("fileData", entity.BinaryFile)
+            //    .SetString("fileType", entity.FileType)
+            //    .UniqueResult();
+            //}
+            //finally
+            //{
+            //    NHibernateHelper.CloseSession();
+            //}
+        //}
     }
 }

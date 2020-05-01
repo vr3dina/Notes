@@ -8,8 +8,8 @@
       <generator class="native" />
     </id>
 
-    <property name="Login" />
-    <property name="Password" />
+    <property name="Login" lazy="false" />
+    <property name="Password" lazy="false"/>
   </class>
 
 </hibernate-mapping>
