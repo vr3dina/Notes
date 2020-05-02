@@ -149,34 +149,34 @@ namespace Notes.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchAndSort(string searchPattern, string searchField, string sortColumn)
+        public ActionResult SearchAndSort(string searchPattern, string sortOrder, string sortColumn, bool myNotes)
         {
-            var notes = noteRepository.FindByTitle(searchPattern);
+            var notes = (myNotes)
+                ? noteRepository.FindByTitle(searchPattern).Where(note => note.User.Login == User.Identity.Name)
+                : noteRepository.FindByTitle(searchPattern).Where(note => note.Published);
 
-            notes = Sort(notes, sortColumn);
+            notes = Sort(notes, sortColumn, sortOrder);
 
             return PartialView("Notes", notes);
         }
 
 
-        private IEnumerable<Note> Sort(IEnumerable<Note> notes, string sortColumn)
+        private IEnumerable<Note> Sort(IEnumerable<Note> notes, string sortColumn, string sortOrder)
         {
+            ViewBag.SortOrder = sortOrder == "desc" ? "" : "desc";
             switch (sortColumn)
             {
                 case "title":
-                    return notes.OrderBy(note => note.Title);
+                    return sortOrder == "desc" ? notes.OrderByDescending(n => n.Title) : notes.OrderBy(note => note.Title);
                 case "user":
-                    return notes.OrderBy(note => note.User.Login);
-                //case "tags":
-                //    return notes.OrderBy(note => note.Tags);
+                    return sortOrder == "desc" ? notes.OrderByDescending(n => n.User.Login) : notes.OrderBy(note => note.User.Login);
                 case "date":
-                    return notes.OrderBy(note => note.CreationDate);
+                    return sortOrder == "desc" ? notes.OrderByDescending(n => n.CreationDate) : notes.OrderBy(note => note.CreationDate);
                 case "public":
-                    return notes.OrderBy(note => note.Published);
+                    return sortOrder == "desc" ? notes.OrderByDescending(n => n.Published) : notes.OrderBy(note => note.Published);
                 default:
-                    break;
+                    return notes;
             }
-            return notes;
         }
 
 

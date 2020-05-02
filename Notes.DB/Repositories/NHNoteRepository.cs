@@ -11,7 +11,6 @@ namespace Notes.DB.Repositories
             var session = NHibernateHelper.GetCurrentSession();
             var notes = session.QueryOver<Note>()
                 .Where(Restrictions.On<Note>(note => note.Title).IsLike($"%{title}%"))
-                .And(note => note.Published == true)
                 .List();
 
             NHibernateHelper.CloseSession();

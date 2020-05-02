@@ -1,23 +1,25 @@
-﻿ @model IEnumerable<Notes.DB.Note>
+﻿@model IEnumerable<Notes.DB.Note>
+
 
 
 <div id="result">
+@Html.Hidden("sOrder", string.IsNullOrEmpty(ViewBag.SortOrder) ? "" : "desc")
     <table class="table">
         <tr>
             <th>
-                <a onclick="ASearchAndSort(this)" id="title" data->Заголовок</a>
+                <a href="#" onclick="ASearchAndSort(this)" id="title" data->Заголовок</a>
             </th>
             <th>
-                <a onclick="ASearchAndSort(this)" id="user" data->Пользователь</a>
+                <a href="#" onclick="ASearchAndSort(this)" id="user" data->Пользователь</a>
             </th>
             <th>
-                <a onclick="ASearchAndSort(this)" id="tags" data->Теги</a>
+                @Html.DisplayName("Тэги")
             </th>
             <th>
-                <a onclick="ASearchAndSort(this)" id="date" data->Дата создания</a>
+                <a href="#" onclick="ASearchAndSort(this)" id="date" data->Дата создания</a>
             </th>
             <th>
-                <a onclick="ASearchAndSort(this)" id="public" data->Опубликовано</a>
+                <a href="#" onclick="ASearchAndSort(this)" id="public" data->Опубликовано</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.File)
@@ -39,7 +41,6 @@
                         @Html.DisplayFor(modelItem => item.User.Login)
                     </td>
                     <td>
-                        @*@Html.Display(string.Join(" ", item.Tags.Select(t => t.TagName)));*@
                         @string.Join(" ", item.Tags.Select(t => t.TagName))
                     </td>
                     <td>
@@ -71,8 +72,9 @@
 <script>
     function ASearchAndSort(v) {
         var searchVal = $("#search").val();
-        var searchField = $("#field").val();
-        var model = { searchPattern: searchVal, searchField: searchField, sortColumn: v.id };
+        var sortOrder = $("#sOrder").val();
+        var isMine = $("#title")[0].innerText == "Мои заметки";
+        var model = { searchPattern: searchVal, sortOrder: sortOrder, sortColumn: v.id, myNotes: isMine };
         $.ajax({
             url: '@Url.Action("SearchAndSort", "Note")',
             type: 'POST',
