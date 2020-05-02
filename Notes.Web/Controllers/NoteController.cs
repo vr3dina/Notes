@@ -90,7 +90,7 @@ namespace Notes.Web.Controllers
         {
             var user = userRepositoty.LoadByLogin(User.Identity.Name);
             var myNotes = noteRepository.LoadByUser(user.Id);
-            return View("Notes", myNotes);
+            return View(myNotes);
         }
 
         public ActionResult Download(long id)
@@ -103,14 +103,42 @@ namespace Notes.Web.Controllers
         {
             var note = noteRepository.Load(id);
 
-            return View(note);
+            return View(new NoteEditModel()
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Published = note.Published,
+                Text = note.Text,
+                Tags = note.Tags.Select(t => t.TagName).ToArray(),
+                CreationDate = note.CreationDate,
+                BinaryFile = note.File
+            });
         }
 
+
         [HttpPost]
-        public ActionResult Save(Note note)
+        public ActionResult Save(NoteEditModel note)
         {
-            note.User = userRepositoty.LoadByLogin(User.Identity.Name);
-            noteRepository.Save(note);
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            List<Tag> tags = new List<Tag>(note.Tags.Length);
+            foreach (var newTag in note.Tags)
+            {
+                var tag = tagRepositoty.LoadByTagName(newTag);
+                tags.Add(tag ?? new Tag() { TagName = newTag });
+            }
+
+            noteRepository.Save(new Note()
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Published = note.Published,
+                Text = note.Text,
+                Tags = tags.DistinctBy(t => t.TagName).ToList(),
+                CreationDate = note.CreationDate,
+                User = user,
+                File = note.BinaryFile
+            });
+
             return RedirectToAction("PublishedNotes");
         }
 
@@ -123,7 +151,6 @@ namespace Notes.Web.Controllers
         [HttpPost]
         public ActionResult SearchAndSort(string searchPattern, string searchField, string sortColumn)
         {
-            //var notes = (searchField == "tags") ? noteRepository.FindByTag(searchPattern) : noteRepository.FindByTitle(searchPattern);
             var notes = noteRepository.FindByTitle(searchPattern);
 
             notes = Sort(notes, sortColumn);

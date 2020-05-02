@@ -152,6 +152,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\NoteEditModel.cs" />
     <Compile Include="Models\NoteModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -200,13 +201,15 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Note\Index.cshtml" />
     <Content Include="Views\Note\Create.cshtml" />
-    <Content Include="Views\Note\Notes.cshtml" />
+    <Content Include="Views\Note\MyNotes.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\tags.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Note\PublishedNotes.cshtml" />
     <Content Include="Views\Note\Edit.cshtml" />
     <Content Include="Views\Note\Details.cshtml" />
     <Content Include="Views\Account\Singup.cshtml" />
+    <Content Include="Views\Note\Notes.cshtml" />
+    <Content Include="Views\Note\SearchBar.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

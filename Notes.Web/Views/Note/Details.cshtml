@@ -46,7 +46,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Tags)
+            @string.Join(" ", Model.Tags.Select(t => t.TagName))
         </dd>
 
         <dt>
