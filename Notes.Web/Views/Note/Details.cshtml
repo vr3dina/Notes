@@ -5,6 +5,10 @@
 }
 
 <h2>Просмотр заметки</h2>
+<p>
+    @Html.ActionLink("Изменить", "Edit", new { id = Model.Id })
+    @Html.ActionLink("Удалить", "Delete", new { id = Model.Id })
+</p>
 
 <div>
     <hr />
