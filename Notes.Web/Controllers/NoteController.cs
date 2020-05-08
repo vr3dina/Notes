@@ -57,40 +57,57 @@ namespace Notes.Web.Controllers
                 };
             }
 
-            List<Tag> tags = new List<Tag>(model.Tags.Length);
-            foreach (var newTag in model.Tags)
-            {
-                var tag = tagRepositoty.LoadByTagName(newTag);
-                tags.Add(tag ?? new Tag() { TagName = newTag });
-            }
-
-
             noteRepository.Save(new Note()
             {
                 Title = model.Title,
                 Published = model.Published,
                 Text = model.Text,
-                Tags = tags.DistinctBy(t => t.TagName).ToList(),
+                Tags = GetTags(model.Tags),
                 CreationDate = DateTime.Now,
                 User = user,
                 File = file
             });
 
-            return RedirectToAction("MyNotes");
+            return RedirectToAction("Notes");
+        }
+        
+        List<Tag> GetTags(string[] stringTags)
+        {
+
+            List<Tag> tags = new List<Tag>(stringTags.Length);
+            foreach (var tagName in stringTags)
+            {
+                if (!string.IsNullOrWhiteSpace(tagName))
+                {
+                    var tag = tagRepositoty.LoadByTagName(tagName);
+                    tags.Add(tag ?? new Tag() { TagName = tagName });
+                }
+            }
+            return tags.DistinctBy(t => t.TagName).ToList();
         }
 
-        public ActionResult PublishedNotes()
+        public ActionResult Notes()
         {
-            var publicNotes = noteRepository.LoadAllPublished();
-
+            ViewBag.MyNotes = true;
+            ViewBag.PNotes = false;
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            var publicNotes = noteRepository.LoadByUser(user.Id);
             return View(publicNotes);
         }
 
-        public ActionResult MyNotes()
+        public ActionResult List(bool showMyNotes, bool showPublishNotes)
         {
+            List<Note> notes = new List<Note>();
             var user = userRepositoty.LoadByLogin(User.Identity.Name);
-            var myNotes = noteRepository.LoadByUser(user.Id);
-            return View(myNotes);
+
+            if (showMyNotes && showPublishNotes)
+                notes = noteRepository.LoadAllAvailable(user.Id).ToList();
+            else if (showMyNotes)
+                notes = noteRepository.LoadByUser(user.Id).ToList();
+            else if (showPublishNotes)
+                notes = noteRepository.LoadAllPublished().ToList();
+
+            return PartialView(notes);
         }
 
         public ActionResult Download(long id)
@@ -120,12 +137,6 @@ namespace Notes.Web.Controllers
         public ActionResult Save(NoteEditModel note)
         {
             var user = userRepositoty.LoadByLogin(User.Identity.Name);
-            List<Tag> tags = new List<Tag>(note.Tags.Length);
-            foreach (var newTag in note.Tags)
-            {
-                var tag = tagRepositoty.LoadByTagName(newTag);
-                tags.Add(tag ?? new Tag() { TagName = newTag });
-            }
 
             noteRepository.Save(new Note()
             {
@@ -133,13 +144,13 @@ namespace Notes.Web.Controllers
                 Title = note.Title,
                 Published = note.Published,
                 Text = note.Text,
-                Tags = tags.DistinctBy(t => t.TagName).ToList(),
+                Tags = GetTags(note.Tags),
                 CreationDate = note.CreationDate,
                 User = user,
                 File = note.BinaryFile
             });
 
-            return RedirectToAction("PublishedNotes");
+            return RedirectToAction("Notes");
         }
 
         public ActionResult Details(long id)
@@ -157,7 +168,7 @@ namespace Notes.Web.Controllers
 
             notes = Sort(notes, sortColumn, sortOrder);
 
-            return PartialView("Notes", notes);
+            return PartialView("List", notes);
         }
 
 
@@ -179,11 +190,28 @@ namespace Notes.Web.Controllers
             }
         }
 
+        public ActionResult SearchByTag(long tagId, bool myNotes)
+        {
+            var notes = (myNotes)
+                ? noteRepository.FindByTag(tagId).Where(note => note.User.Login == User.Identity.Name)
+                : noteRepository.FindByTag(tagId).Where(note => note.Published);
+            return PartialView("List", notes);
+        }
+
+        public ActionResult NotesWithTag(long id)
+        {
+            ViewBag.MyNotes = true;
+            ViewBag.PNotes = true;
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            var notes = noteRepository.FindByTag(id).Where(note => note.Published || note.User.Id == user.Id);
+            return View("Notes", notes);
+        }
+
 
         public ActionResult Delete(long id)
         {
             noteRepository.Delete(id);
-            return RedirectToAction("MyNotes");
+            return RedirectToAction("Notes");
         }
     }
 }

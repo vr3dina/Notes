@@ -1,6 +1,7 @@
 ﻿using NHibernate.Criterion;
 using Notes.DB.Repositories.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Notes.DB.Repositories
 {
@@ -18,19 +19,18 @@ namespace Notes.DB.Repositories
             return notes;
         }
 
-        //public IEnumerable<Note> FindByTag(string tags)
-        //{
-        //    var session = NHibernateHelper.GetCurrentSession();
+        public IEnumerable<Note> FindByTag(long tagId)
+        {
+            var session = NHibernateHelper.GetCurrentSession();
 
-        //    var notes = session.QueryOver<Note>()
-        //        .Where(Restrictions.On<Note>(note => note.Tags).IsLike($"%{tags}%"))
-        //        .And(note => note.Published == true)
-        //        .List();
+            var notes = session.Query<Note>()
+                .Where(note => note.Tags.Select(t => t.Id).Contains(tagId)).ToList();
+                //.List();
 
-        //    NHibernateHelper.CloseSession();
+            NHibernateHelper.CloseSession();
 
-        //    return notes;
-        //}
+            return notes;
+        }
 
         public IEnumerable<Note> LoadAllPublished()
         {
@@ -57,6 +57,20 @@ namespace Notes.DB.Repositories
 
             return notes;
         }
+        
+        public IEnumerable<Note> LoadAllAvailable(long userId)
+        {
+            var session = NHibernateHelper.GetCurrentSession();
+
+            var notes = session.QueryOver<Note>()
+                .Where(note => note.User.Id == userId || note.Published)
+                .List();
+
+            NHibernateHelper.CloseSession(); ;
+
+            return notes;
+        }
+
 
         //public override void Save(Note entity)
         //{

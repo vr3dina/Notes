@@ -39,7 +39,7 @@
             @Html.LabelFor(model => model.CreationDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.CreationDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", type = "datetime" } })
+                    @Html.EditorFor(model => model.CreationDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                     @Html.ValidationMessageFor(model => model.CreationDate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -58,7 +58,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Text, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.Text, 10, 50, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.Text, 10, 50, new { htmlAttributes = new { @class = "form-control"  } })
                 @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -67,10 +67,18 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", Name = "tags" } })
+                @if (Model.Tags.Any())
+                {
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", Name = "tags" } })
+                        @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
+                    </div>
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Tags, "tags")
                     @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
-                </div>
+                }
             </div>
         </div>
 

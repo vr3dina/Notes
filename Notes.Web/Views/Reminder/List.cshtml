@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Notes.DB.Reminder>
+
+
+<style>
+    .r_time {
+        font-size: small;
+        color: gray;
+        margin-left: 30px;
+    }
+
+    .r_time_over {
+        font-size: small;
+        color: red;
+        margin-left: 30px;
+    }
+
+    input[type=checkbox].css-checkbox {
+        position: absolute;
+        z-index: -1000;
+        left: -1000px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        width: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+    }
+
+        input[type=checkbox].css-checkbox + label.css-label {
+            padding-left: 30px;
+            height: 25px;
+            display: inline-block;
+            line-height: 25px;
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            font-size: 25px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        input[type=checkbox].css-checkbox:checked + label.css-label {
+            background-position: 0 -25px;
+        }
+
+    label.css-label {
+        background-image: url(http://csscheckbox.com/checkboxes/u/csscheckbox_391ce065f36b1460c4845fa9b5173fba.png);
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+</style>
+
+
+@foreach (var item in Model)
+{
+
+    if (item.IsDone)
+    {
+        <input type='checkbox' class="css-checkbox" id="@item.Id" checked="checked" onclick='handleClick(this);'>
+    }
+    else
+    {
+        <input type='checkbox' class="css-checkbox" id="@item.Id" onclick='handleClick(this);'>
+    }
+    <label for="@item.Id" class="css-label">
+        @item.Title
+    </label>
+    <span style="margin-left: 10px">
+        <a href="/Reminder/Edit/@item.Id"><img src="~/Content/img/edit.png" height="23" /></a>
+    </span>
+    <span style="margin-left: 10px">
+        <a href="/Reminder/Delete/@item.Id"><img src="~/Content/img/delete.png" height="23" /></a>
+    </span>
+    if (item.TimeToAchieve != null)
+    {
+
+        <br />
+        if (DateTime.Now.CompareTo(item.TimeToAchieve) < 0)
+        {
+            <span class="r_time">Выполнить до: @item.TimeToAchieve</span>
+        }
+        else
+        {
+            <span class="r_time_over">Выполнить до: @item.TimeToAchieve</span>
+        }
+    }
+    <br />
+
+
+    <details style="margin-left:30px">
+        <summary style="font-size:large">Описание</summary>
+        @item.Description
+    </details>
+
+
+    <br />
+    <br />
+}
+
+<script>
+    function handleClick(cb) {
+        var model = { isChecked: cb.checked, reminderId: parseInt(cb.id) };
+        $.ajax({
+            url: '@Url.Action("UpdateState", "Reminder")',
+            type: 'POST',
+            cache: false,
+            data: model,
+            success: function (result) {
+                $("#result").html(result);
+            }
+        });
+
+    }
+</script>
+

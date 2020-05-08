@@ -6,10 +6,11 @@ namespace Notes.DB.Repositories.Interfaces
     {
         IEnumerable<Note> FindByTitle(string title);
 
-        //IEnumerable<Note> FindByTag(string searchPattern);
+        IEnumerable<Note> FindByTag(long tagId);
 
         IEnumerable<Note> LoadAllPublished();
 
         IEnumerable<Note> LoadByUser(long userId);
+        IEnumerable<Note> LoadAllAvailable(long userId);
     }
 }

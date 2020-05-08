@@ -5,11 +5,19 @@
 }
 
 <div class="jumbotron">
-    <h1>Web Notes</h1>
-    <p class="lead">Pltcm rfrjq-nj gjktpysq ntrcn? jgbcsdf.ob[ lfyysq cfqn</p>
+    <h1>Web Notes and Reminders</h1>
+    @*<p class="lead">Pltcm rfrjq-nj gjktpysq ntrcn? jgbcsdf.ob[ lfyysq cfqn</p>*@
     @if (!User.Identity.IsAuthenticated)
     {
         <p><a href="/Account/Login" class="btn btn-primary btn-lg">Войти &raquo;</a></p>
         <p><a href="/Account/Singup" class="btn btn-primary btn-lg">Зарегестироваться &raquo;</a></p>
+    }
+    else
+    {
+        <br />
+        <div class="form-inline">
+            <a href="/Note/Notes" class="btn btn-primary jumbotron">Заметки</a>
+            <a href="Reminder/List/" class="btn btn-primary jumbotron">Напоминания</a>
+        </div>
     }
 </div>

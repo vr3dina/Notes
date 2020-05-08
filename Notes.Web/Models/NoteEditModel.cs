@@ -18,6 +18,8 @@ namespace Notes.Web.Models
         public bool Published { get; set; }
         
         [Display(Name = "Дата создания")]
+        [DataType(DataType.DateTime, ErrorMessage = "Date only")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public virtual DateTime CreationDate { get; set; }
 
         [Display(Name = "Текст заметки")]

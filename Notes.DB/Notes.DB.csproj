@@ -63,16 +63,19 @@
   <ItemGroup>
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\IEntity.cs" />
+    <Compile Include="Models\Reminder.cs" />
     <Compile Include="Models\Note.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="NHibernateHelper.cs" />
+    <Compile Include="Repositories\Interfaces\IReminderRepository.cs" />
     <Compile Include="Repositories\Interfaces\ITagRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUserRepository.cs" />
     <Compile Include="Repositories\NHBaseRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Interfaces\IEntityRepository.cs" />
     <Compile Include="Repositories\Interfaces\INoteRepository.cs" />
+    <Compile Include="Repositories\NHReminderRepository.cs" />
     <Compile Include="Repositories\NHNoteRepository.cs" />
     <Compile Include="Repositories\NHTagRepository.cs" />
     <Compile Include="Repositories\NHUserRepository.cs" />
@@ -99,6 +102,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mapping\Tag.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mapping\Reminder.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,85 +1,42 @@
-﻿@model IEnumerable<Notes.DB.Note>
+﻿
+<h2>Заметки</h2>
+
+<p>
+    @Html.ActionLink("Новая заметка", "Create", "Note")
+</p>
+
+@Html.Partial("SearchBar")
+
+@if (ViewBag.MyNotes)
+{
+    <input type='checkbox' id="myNotes" checked="checked" onclick='handleClick(this);'>
+}
+else
+{
+    <input type='checkbox' id="myNotes" onclick='handleClick(this);'>
+}
+<label for="myNotes"> Мои заметки </label>
+
+@if (ViewBag.PNotes)
+{
+    <input type='checkbox' id="publishNotes" checked="checked" onclick='handleClick(this);'>
+}
+else
+{
+    <input type='checkbox' id="publishNotes" onclick='handleClick(this);'>
+}
+<label for="publishNotes">Опубликованные заметки </label>
 
 
-
-    <div id="result">
-        @Html.Hidden("sOrder", string.IsNullOrEmpty(ViewBag.SortOrder) ? "" : "desc")
-        <p>
-            @Html.ActionLink("Новая заметка", "Create", "Note")
-        </p>
-        <table class="table">
-            <tr>
-                <th>
-                    <a href="#" onclick="ASearchAndSort(this)" id="title" data->Заголовок</a>
-                </th>
-                <th>
-                    <a href="#" onclick="ASearchAndSort(this)" id="user" data->Пользователь</a>
-                </th>
-                <th>
-                    @Html.DisplayName("Тэги")
-                </th>
-                <th>
-                    <a href="#" onclick="ASearchAndSort(this)" id="date" data->Дата создания</a>
-                </th>
-                <th>
-                    <a href="#" onclick="ASearchAndSort(this)" id="public" data->Опубликовано</a>
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.File)
-                </th>
-                <th></th>
-            </tr>
-            @if (Model != null)
-            {
-                foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @{
-                                string title = item.Title.Length > 30 ? item.Title.Substring(0, 30) + "..." : item.Title;
-                            }
-                            @Html.DisplayFor(modelItem => title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.Login)
-                        </td>
-                        <td>
-                            @string.Join(" ", item.Tags.Select(t => t.TagName))
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CreationDate)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Published)
-                        </td>
-                        <td>
-                            @if (item.File != null)
-                            {
-                                <a href="/Note/Download/@item.Id"><img src="~/Content/img/download.png" height="17" /></a>
-                            }
-                        </td>
-                        <td>
-                            @Html.ActionLink("Посмотреть", "Details", new { Id = item.Id })
-                            @if (User.Identity.Name == item.User.Login)
-                            {
-                                @Html.ActionLink(" Изменить", "Edit", new { Id = item.Id })
-                                @Html.ActionLink(" Удалить", "Delete", new { Id = item.Id })
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-        </table>
-    </div>
+@Html.Partial("List")
 
 <script>
-    function ASearchAndSort(v) {
-        var searchVal = $("#search").val();
-        var sortOrder = $("#sOrder").val();
-        var isMine = $("#title")[0].innerText == "Мои заметки";
-        var model = { searchPattern: searchVal, sortOrder: sortOrder, sortColumn: v.id, myNotes: isMine };
+    function handleClick(cb) {
+        var showMyNote = $('#myNotes')[0].checked;
+        var showPublishNote = $('#publishNotes')[0].checked;
+        var model = { showMyNotes: showMyNote, showPublishNotes: showPublishNote };
         $.ajax({
-            url: '@Url.Action("SearchAndSort", "Note")',
+            url: '@Url.Action("List", "Note")',
             type: 'POST',
             cache: false,
             data: model,
@@ -89,3 +46,4 @@
         });
     }
 </script>
+

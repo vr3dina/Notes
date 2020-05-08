@@ -50,7 +50,11 @@
         </dt>
 
         <dd>
-            @string.Join(" ", Model.Tags.Select(t => t.TagName))
+            @foreach (var tag in Model.Tags)
+            {
+                @Html.ActionLink(tag.TagName, "NotesWithTag", new { Id = tag.Id })
+                <span> </span>
+            }
         </dd>
 
         <dt>
@@ -58,7 +62,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Text)
+            <textarea readonly cols="50" htmlattributes="{ class = form-control }" id="Text" name="Text" rows="10">@Model.Text</textarea>
         </dd>
     </dl>
 </div>

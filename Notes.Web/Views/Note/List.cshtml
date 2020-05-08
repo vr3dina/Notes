@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Notes.DB.Note>
+
+
+<div id="result">
+    @Html.Hidden("sOrder", string.IsNullOrEmpty(ViewBag.SortOrder) ? "" : "desc")
+    <table class="table">
+        <tr>
+            <th>
+                <a href="#" onclick="ASearchAndSort(this)" id="title" data->Заголовок</a>
+            </th>
+            <th>
+                <a href="#" onclick="ASearchAndSort(this)" id="user" data->Пользователь</a>
+            </th>
+            <th>
+                @Html.DisplayName("Тэги")
+            </th>
+            <th>
+                <a href="#" onclick="ASearchAndSort(this)" id="date" data->Дата создания</a>
+            </th>
+            <th>
+                <a href="#" onclick="ASearchAndSort(this)" id="public" data->Опубликовано</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.File)
+            </th>
+            <th></th>
+        </tr>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            string title = item.Title.Length > 30 ? item.Title.Substring(0, 30) + "..." : item.Title;
+                        }
+                        @Html.DisplayFor(modelItem => title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Login)
+                    </td>
+                    <td>
+                        @foreach (var tag in item.Tags)
+                        {
+                            <a href="#" onclick="ASearchByTag(this)" id="@tag.Id" data->@tag.TagName</a>
+                            <span> </span>
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreationDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Published)
+                    </td>
+                    <td>
+                        @if (item.File != null)
+                        {
+                            <a href="/Note/Download/@item.Id"><img src="~/Content/img/download.png" height="17" /></a>
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Посмотреть", "Details", new { Id = item.Id })
+                        @if (User.Identity.Name == item.User.Login)
+                        {
+                            @Html.ActionLink(" Изменить", "Edit", new { Id = item.Id })
+                            @Html.ActionLink(" Удалить", "Delete", new { Id = item.Id })
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+<script>
+    function ASearchAndSort(v) {
+        var searchVal = $("#search").val();
+        var sortOrder = $("#sOrder").val();
+        var isMine = $("#title")[0].innerText == "Мои заметки";
+        var model = { searchPattern: searchVal, sortOrder: sortOrder, sortColumn: v.id, myNotes: isMine };
+        $.ajax({
+            url: '@Url.Action("SearchAndSort", "Note")',
+            type: 'POST',
+            cache: false,
+            data: model,
+            success: function (result) {
+                $("#result").html(result);
+            }
+        });
+    }
+
+    function ASearchByTag(v) {
+        $("#search")[0].value = "#" + v.innerText;
+        var isMine = $("#title")[0].innerText == "Мои заметки";
+        var model = { tagId: parseInt(v.id), myNotes: isMine };
+        $.ajax({
+            url: '@Url.Action("SearchByTag", "Note")',
+            type: 'POST',
+            cache: false,
+            data: model,
+            success: function (result) {
+                $("#result").html(result);
+            }
+        });
+    }
+</script>

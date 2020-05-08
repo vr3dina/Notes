@@ -44,7 +44,7 @@ namespace Notes.Web.Controllers
 
             FormsAuthentication.SetAuthCookie(user.Login, false);
 
-            return RedirectToAction("PublishedNotes", "Note");
+            return RedirectToAction("Index", "Note");
         }
 
         [AllowAnonymous]
