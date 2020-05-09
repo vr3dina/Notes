@@ -9,28 +9,28 @@
 
 @if (ViewBag.MyNotes)
 {
-    <input type='checkbox' id="myNotes" checked="checked" onclick='handleClick(this);'>
+    <input type='checkbox' id="myNotes" checked="checked" onclick='ASearchAndSort(this);'>
 }
 else
 {
-    <input type='checkbox' id="myNotes" onclick='handleClick(this);'>
+    <input type='checkbox' id="myNotes" onclick='ASearchAndSort(this);'>
 }
 <label for="myNotes"> Мои заметки </label>
 
 @if (ViewBag.PNotes)
 {
-    <input type='checkbox' id="publishNotes" checked="checked" onclick='handleClick(this);'>
+    <input type='checkbox' id="publishNotes" checked="checked" onclick='ASearchAndSort(this);'>
 }
 else
 {
-    <input type='checkbox' id="publishNotes" onclick='handleClick(this);'>
+    <input type='checkbox' id="publishNotes" onclick='ASearchAndSort(this);'>
 }
 <label for="publishNotes">Опубликованные заметки </label>
 
 
 @Html.Partial("List")
 
-<script>
+@*<script>
     function handleClick(cb) {
         var showMyNote = $('#myNotes')[0].checked;
         var showPublishNote = $('#publishNotes')[0].checked;
@@ -45,5 +45,5 @@ else
             }
         });
     }
-</script>
+</script>*@
 

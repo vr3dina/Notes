@@ -2,6 +2,7 @@
 using Notes.DB.Repositories;
 using Notes.DB.Repositories.Interfaces;
 using Notes.Web.Models;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Notes.Web.Controllers
@@ -41,11 +42,19 @@ namespace Notes.Web.Controllers
             return RedirectToAction("List");
         }
 
+        public ActionResult Index()
+        {
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            //var reminders = reminderRepository.LoadByUser(user.Id).OrderBy(n => n.IsDone).ThenBy(n => n.TimeToAchieve);
+            var reminders = reminderRepository.LoadByUser(user.Id);
+            return View(reminders);
+        }
+
         public ActionResult List()
         {
             var user = userRepositoty.LoadByLogin(User.Identity.Name);
             var reminders = reminderRepository.LoadByUser(user.Id);
-            return View("Index", reminders);
+            return PartialView(reminders);
         }
 
         public ActionResult Edit(long id)
@@ -63,13 +72,13 @@ namespace Notes.Web.Controllers
 
             reminderRepository.Save(reminder);
 
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
 
         public ActionResult Delete(long id)
         {
             reminderRepository.Delete(id);
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

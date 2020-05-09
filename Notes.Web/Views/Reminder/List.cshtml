@@ -54,53 +54,59 @@
     }
 </style>
 
+<div id="result">
 
-@foreach (var item in Model)
-{
-
-    if (item.IsDone)
-    {
-        <input type='checkbox' class="css-checkbox" id="@item.Id" checked="checked" onclick='handleClick(this);'>
-    }
-    else
-    {
-        <input type='checkbox' class="css-checkbox" id="@item.Id" onclick='handleClick(this);'>
-    }
-    <label for="@item.Id" class="css-label">
-        @item.Title
-    </label>
-    <span style="margin-left: 10px">
-        <a href="/Reminder/Edit/@item.Id"><img src="~/Content/img/edit.png" height="23" /></a>
-    </span>
-    <span style="margin-left: 10px">
-        <a href="/Reminder/Delete/@item.Id"><img src="~/Content/img/delete.png" height="23" /></a>
-    </span>
-    if (item.TimeToAchieve != null)
+    @foreach (var item in Model)
     {
 
-        <br />
-        if (DateTime.Now.CompareTo(item.TimeToAchieve) < 0)
+        if (item.IsDone)
         {
-            <span class="r_time">Выполнить до: @item.TimeToAchieve</span>
+            <input type='checkbox' class="css-checkbox" id="@item.Id" checked="checked" onclick='handleClick(this);'>
         }
         else
         {
-            <span class="r_time_over">Выполнить до: @item.TimeToAchieve</span>
+            <input type='checkbox' class="css-checkbox" id="@item.Id" onclick='handleClick(this);'>
         }
+        <label for="@item.Id" class="css-label">
+            @item.Title
+        </label>
+        <span style="margin-left: 10px">
+            <a href="/Reminder/Edit/@item.Id"><img src="~/Content/img/edit.png" height="23" /></a>
+        </span>
+        <span style="margin-left: 10px">
+            <a href="/Reminder/Delete/@item.Id"><img src="~/Content/img/delete.png" height="23" /></a>
+        </span>
+        if (item.TimeToAchieve != null)
+        {
+
+            <br />
+            if (DateTime.Now.CompareTo(item.TimeToAchieve) < 0)
+            {
+                <span class="r_time">Выполнить до: @item.TimeToAchieve</span>
+            }
+            else
+            {
+                <span class="r_time_over">Выполнить до: @item.TimeToAchieve</span>
+            }
+        }
+        <br />
+
+        if (!string.IsNullOrWhiteSpace(item.Description))
+        {
+
+            <details style="margin-left:30px">
+                <summary style="font-size:large">Описание</summary>
+                <textarea readonly cols="50" htmlattributes="{ class = form-control }" id="Text" name="Text" rows="5">@item.Description</textarea>
+                @*@Html.TextAreaFor(model => item.Description, 5, 50, new { htmlAttributes = new { @class = "form-control" } })*@
+            </details>
+        }
+
+
+        <br />
+        <br />
     }
-    <br />
 
-
-    <details style="margin-left:30px">
-        <summary style="font-size:large">Описание</summary>
-        @item.Description
-    </details>
-
-
-    <br />
-    <br />
-}
-
+</div>
 <script>
     function handleClick(cb) {
         var model = { isChecked: cb.checked, reminderId: parseInt(cb.id) };
@@ -113,7 +119,6 @@
                 $("#result").html(result);
             }
         });
-
     }
 </script>
 

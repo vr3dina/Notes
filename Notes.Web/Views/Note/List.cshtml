@@ -77,8 +77,9 @@
     function ASearchAndSort(v) {
         var searchVal = $("#search").val();
         var sortOrder = $("#sOrder").val();
-        var isMine = $("#title")[0].innerText == "Мои заметки";
-        var model = { searchPattern: searchVal, sortOrder: sortOrder, sortColumn: v.id, myNotes: isMine };
+        var showMyNote = $('#myNotes')[0].checked;
+        var showPublishNote = $('#publishNotes')[0].checked;
+        var model = { searchPattern: searchVal, sortOrder: sortOrder, sortColumn: v.id, showMyNotes: showMyNote, showPublishNotes: showPublishNote };
         $.ajax({
             url: '@Url.Action("SearchAndSort", "Note")',
             type: 'POST',
@@ -92,8 +93,9 @@
 
     function ASearchByTag(v) {
         $("#search")[0].value = "#" + v.innerText;
-        var isMine = $("#title")[0].innerText == "Мои заметки";
-        var model = { tagId: parseInt(v.id), myNotes: isMine };
+        var showMyNote = $('#myNotes')[0].checked;
+        var showPublishNote = $('#publishNotes')[0].checked;
+        var model = { tagId: parseInt(v.id), showMyNotes: showMyNote, showPublishNotes: showPublishNote };
         $.ajax({
             url: '@Url.Action("SearchByTag", "Note")',
             type: 'POST',

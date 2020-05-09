@@ -70,7 +70,7 @@ namespace Notes.Web.Controllers
 
             return RedirectToAction("Notes");
         }
-        
+
         List<Tag> GetTags(string[] stringTags)
         {
 
@@ -160,11 +160,23 @@ namespace Notes.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchAndSort(string searchPattern, string sortOrder, string sortColumn, bool myNotes)
+        public ActionResult SearchAndSort(string searchPattern, string sortOrder, string sortColumn, bool showMyNotes, bool showPublishNotes)
         {
-            var notes = (myNotes)
-                ? noteRepository.FindByTitle(searchPattern).Where(note => note.User.Login == User.Identity.Name)
-                : noteRepository.FindByTitle(searchPattern).Where(note => note.Published);
+            if (searchPattern.StartsWith("#"))
+            {
+                var tag = tagRepositoty.LoadByTagName(searchPattern.Substring(1));
+                return RedirectToAction("SearchByTag", new { tagId = tag.Id, showMyNotes, showPublishNotes });
+            }
+
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            IEnumerable<Note> notes = new List<Note>();
+
+            if (showMyNotes && showPublishNotes)
+                notes = noteRepository.FindByTitle(searchPattern).Where(note => note.Published || note.User.Id == user.Id);
+            else if (showMyNotes)
+                notes = noteRepository.FindByTitle(searchPattern).Where(note => note.User.Id == user.Id);
+            else if (showPublishNotes)
+                notes = noteRepository.FindByTitle(searchPattern).Where(note => note.Published);
 
             notes = Sort(notes, sortColumn, sortOrder);
 
@@ -190,11 +202,17 @@ namespace Notes.Web.Controllers
             }
         }
 
-        public ActionResult SearchByTag(long tagId, bool myNotes)
+        public ActionResult SearchByTag(long tagId, bool showMyNotes, bool showPublishNotes)
         {
-            var notes = (myNotes)
-                ? noteRepository.FindByTag(tagId).Where(note => note.User.Login == User.Identity.Name)
-                : noteRepository.FindByTag(tagId).Where(note => note.Published);
+            var user = userRepositoty.LoadByLogin(User.Identity.Name);
+            IEnumerable<Note> notes = new List<Note>();
+            if (showMyNotes && showPublishNotes)
+                notes = noteRepository.FindByTag(tagId).Where(note => note.Published || note.User.Id == user.Id);
+            else if (showMyNotes)
+                notes = noteRepository.FindByTag(tagId).Where(note => note.User.Id == user.Id);
+            else if (showPublishNotes)
+                notes = noteRepository.FindByTag(tagId).Where(note => note.Published);
+
             return PartialView("List", notes);
         }
 

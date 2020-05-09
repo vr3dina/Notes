@@ -11,6 +11,8 @@ namespace Notes.DB.Repositories
 
             var reminders = session.QueryOver<Reminder>()
                 .Where(r => r.User.Id == userId)
+                .OrderBy(r => r.IsDone).Asc
+                .ThenBy(r => r.TimeToAchieve).Asc
                 .List();
 
             NHibernateHelper.CloseSession(); ;
